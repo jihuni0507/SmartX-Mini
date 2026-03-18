@@ -2,7 +2,7 @@
 
 # 0. Objective
 
-![overall objective](https://user-images.githubusercontent.com/82452337/160807997-9caadb51-b363-4e82-bbb2-e1f5888b08b3.png)
+![overall objective](https://private-user-images.githubusercontent.com/84670170/565567407-b7ffc1a7-d8b7-4839-bcb5-af0a93af2bd4.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NzM4NDAwMTgsIm5iZiI6MTc3MzgzOTcxOCwicGF0aCI6Ii84NDY3MDE3MC81NjU1Njc0MDctYjdmZmMxYTctZDhiNy00ODM5LWJjYjUtYWYwYTkzYWYyYmQ0LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNjAzMTglMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjYwMzE4VDEzMTUxOFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTFkMmY2N2QzYTNkMDhhNjYwNDAzYzY5MzQ2NmU4MTc5ODBkZDMxZjliYmIwMDVlYjEwNGVmZmM1ZjAyNmU1NGImWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.2KLEiRyNzOkQLNwZ6GnFUiIjZAhBzfn5r6zc-UO0d_s)
 
 **이번 Lab의 목표는 시스템을 모니터링하고 모니터링된 정보를 시각화할 수 있는 Tower(관제 시스템)을 구축하는 것입니다.**
 
@@ -277,29 +277,14 @@ sudo docker run -it --rm \
 
 `broker_to_influxdb.py`는 kafka consumer로서 kafka broker로부터 message를 전달받고, influxdb에 해당 message data를 적재하는 역할을 합니다.
 
-### 1-6-1. `broker_to_influxdb.py` 코드 수정
+### 1-6-1. `broker_to_influxdb.py` 코드 확인
 
-> [!note]
->
-> 새로운 터미널을 열고 진행해주세요!
+실행 전에 코드를 확인해보세요. (별도의 수정은 필요하지 않습니다.)
+
+`broker_to_influxdb.py`는 Kafka consumer로서 broker로부터 메시지를 전달받고, InfluxDB에 해당 데이터를 적재하는 역할을 합니다.
 
 ```bash
-vim ~/SmartX-Mini/SmartX-Mini-2026/Experiment/Lab-4. Tower/deploy/ubuntu-kafkatodb/broker_to_influxdb.py
-```
-
-```python
-# before
-consumer = KafkaConsumer('resource',bootstrap_servers=['<NUC_IP>:9091'])
-consumer = KafkaConsumer('resource', bootstrap_servers=['<NUC_IP>:9091'])
-cmd = "curl -XPOST 'http://localhost:8086/query' --data-urlencode 'q=CREATE DATABASE Labs'"
-cmd = "curl -i -XPOST 'http://localhost:8086/write?db=Labs' --data-binary '...'"
-
-# after
-consumer = KafkaConsumer('resource',bootstrap_servers=['localhost:9090'])
-consumer = KafkaConsumer('resource', bootstrap_servers=['localhost:9090'])
-# Labs bucket은 1-1에서 이미 생성하므로 CREATE DATABASE 호출은 제거(또는 주석 처리)
-# write URL의 u/p는 환경변수(INFLUXDB_V1_USER, INFLUXDB_V1_PASSWORD)로 처리
-cmd = "curl -sS -XPOST 'http://localhost:8086/write?db=Labs&u=<INFLUXDB_V1_USER>&p=<INFLUXDB_V1_PASSWORD>' --data-binary '...'"
+vim ~/SmartX-Mini/SmartX-Mini-2026/Experiment/'Lab-4. Tower'/deploy/ubuntu-kafkatodb/broker_to_influxdb.py
 ```
 
 ![broker_to_influxdb python file](https://user-images.githubusercontent.com/82452337/160814546-da543a58-e6b6-49cb-bdb1-19aa2de9c1fb.png)
@@ -311,14 +296,14 @@ cmd = "curl -sS -XPOST 'http://localhost:8086/write?db=Labs&u=<INFLUXDB_V1_USER>
 ```bash
 sudo sysctl -w fs.file-max=100000
 ulimit -S -n 2048
-source ~/.venv/bin/activate
-
+# optional: CLI 좌측에 (venv) 표기가 없는 경우; venv가 실행되지 않은 경우
+# source ~/.venv/bin/activate
 
 # optional: v1 인증/DBRP 매핑 확인
 curl -sS -XPOST "http://localhost:8086/query?u=${INFLUXDB_V1_USER}&p=${INFLUXDB_V1_PASSWORD}&db=Labs" \
-  --data-urlencode "q=SHOW MEASUREMENTS"
+  --data-urlencode "q=SHOW MEASUREMENTS" 
 
-python ~/SmartX-Mini/SmartX-Mini-2026/Experiment/Lab-4. Tower/deploy/ubuntu-kafkatodb/broker_to_influxdb.py
+python ~/SmartX-Mini/SmartX-Mini-2026/Experiment/'Lab-4. Tower'/deploy/ubuntu-kafkatodb/broker_to_influxdb.py
 ```
 
 ## 1-7. Chronograf 대시보드 ( in NUC )
@@ -337,7 +322,12 @@ Chronograf Config에서 Default Connection을 먼저 수정하여 InfluxDB 인�
 
 ![chronograf-config-1](./img/chronograf-config-1.png)
 
-그리고 이전에 InfluxDB container를 올릴 때 사용한 `INFLUXDB_V1_USER`, `INFLUXDB_V1_PASSWORD`를 각각 `username`, `password` 필드에 입력합니다.
+그리고 **1-1-1**에서 설정한 v1 인증 계정 정보를 각각 `username`, `password` 필드에 입력합니다. 아래 명령으로 현재 설정된 값을 확인할 수 있습니다.
+
+```bash
+echo "Username: $INFLUXDB_V1_USER"
+echo "Password: $INFLUXDB_V1_PASSWORD"
+```
 
 ![chronograf-config-2](./img/chronograf-config-2.png)
 
@@ -404,12 +394,19 @@ CPU의 현재 상태를 모니터링할 수 있습니다.
 그 다음, **PI에서 다음의 명령어를 입력해보세요**.
 
 ```bash
-docker run --rm -it busybox sh -c "while true; do :; done"
+sudo docker run -d --name busybox_stress1 busybox sh -c "while true; do :; done"
+sudo docker run -d --name busybox_stress2 busybox sh -c "while true; do :; done"
+sudo docker run -d --name busybox_stress3 busybox sh -c "while true; do :; done"
+sudo docker run -d --name busybox_stress4 busybox sh -c "while true; do :; done"
 ```
 
 브라우저에서 새로고침을 누르다보면 Dashboard의 그래프가 위로 움직이는 것을 확인할 수 있습니다.
 
-확인했으면 `Ctrl + C`를 눌러 CPU 부하를 멈춰주세요 ( in PI ).
+확인했으면 아래 명령어로 CPU 부하를 멈춰주세요 ( in PI ).
+
+```bash
+sudo docker rm -f busybox_stress1 busybox_stress2 busybox_stress3 busybox_stress4
+```
 
 # 2. Lab Summary
 
