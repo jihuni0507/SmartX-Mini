@@ -106,7 +106,7 @@ OS : Ubuntu Desktop 24.04 LTS(64bit)
    - Choose your language: English
    - Accessibility in Ubuntu: 설정 안 함 (Next)
    - Select your keyboard layout: English (US)
-   - Connect to the internet: Use wired connection
+   - Connect to the internet: Do not connect to the internet
    - What do you want to do with Ubuntu?: Install Ubuntu
    - How would you like to install Ubuntu?: Interactive installation
    - What apps would you like to install to start with?: Default selection
@@ -118,7 +118,7 @@ OS : Ubuntu Desktop 24.04 LTS(64bit)
      -> ex. XXX.XXX.XXX.109의 경우, nuc109
    - Your username: gist
    - 비밀번호의 경우, 조교의 안내에 따라 설정을 진행합니다.
-4. Location 설정 화면에서 "Seoul"을 선택합니다.
+4. Location 설정 화면에서 "Seoul"을 선택합니다. (지도에서 대한민국 클릭)
 5. Review your choices 화면에서 아래와 같이 나타나면 문제없이 진행 된 것입니다. 초록색 Install을 눌러 계속합니다.
    - General
      - Disk setup: Erase disk and Install Ubuntu
@@ -179,6 +179,9 @@ OS : Ubuntu Desktop 24.04 LTS(64bit)
   - Address: 할당받은 NUC의 IP 주소 (IP가 적힌 종이를 참고합니다.)
   - Netmask와 Gateway, DNS 정보도 입력합니다. (조교의 안내를 바탕으로 설정합니다.)
     ![network setting 3](./img/network_setting3.png)
+
+- 보이는 것처럼 Connected가 되면 성공입니다.
+  ![network setting 4](./img/network_setting4.png)
 
 ## 2-2. NUC: Network Configuration using Virtual Switch
 
