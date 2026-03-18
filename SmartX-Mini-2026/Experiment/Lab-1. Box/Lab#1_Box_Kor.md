@@ -240,6 +240,12 @@ OS : Ubuntu Desktop 24.04 LTS(64bit)
    - Ubuntu 24.04에서는 Netplan 패키지를 삭제하지 않고 유지합니다. 대신 OVS + ifupdown 수동 설정 충돌을 피하기 위해 기본 네트워크 매니저를 비활성화합니다.
    - 아래 작업은 네트워크가 잠시 끊길 수 있으므로 **로컬 콘솔(NUC 직접 화면)**에서 진행합니다.
 
+> [!CAUTION]
+> **인터넷 연결 끊김 시작 지점**
+> 아래 명령어를 실행하는 순간부터 인터넷 연결이 중단됩니다. SSH로 접속 중이라면 연결이 끊기므로, 반드시 NUC의 **로컬 화면(모니터 + 키보드 직접 연결)**에서 진행하세요.
+> 이후 단계에서 본 가이드 문서를 참고해야 하므로, **지금 바로 GitHub 웹 페이지를 브라우저에서 미리 열어두세요.**
+> `2-2`섹션 마지막 부분에 **인터넷 연결 지점**이 있습니다.
+
    ```bash
    sudo systemctl stop systemd-networkd.socket systemd-networkd networkd-dispatcher systemd-networkd-wait-online
    sudo systemctl disable systemd-networkd.socket systemd-networkd networkd-dispatcher systemd-networkd-wait-online
@@ -287,11 +293,12 @@ OS : Ubuntu Desktop 24.04 LTS(64bit)
 
 <!-- -->
 
-> [!CAUTION]
-> ⚠️ **주의!** ⚠️  
-> **NUC에 이더넷 포트가 두 개 있는 경우 `eno1`이라는 인터페이스가 없습니다. `ifconfig` 명령으로 네트워크에 연결된 인터페이스(`enp88s0` 또는 `enp89s0`)를 확인합니다. (예를 들어, 터미널에 `ifconfig -a` 명령어를 입력하고 RX 및 TX 패킷이 0이 아닌 인터페이스를 선택합니다.) 그리고 아래 텍스트의 `eno1`을 모두 `enp88s0` 또는 `enp89s0`으로 변경합니다.**
+[!CAUTION]
+⚠️ **주의!** ⚠️  
+ **NUC에 이더넷 포트가 두 개 있는 경우 `eno1`이라는 인터페이스가 없습니다. `ifconfig` 명령으로 네트워크에 연결된 인터페이스(`enp88s0` 또는 `enp89s0`)를 확인합니다. (예를 들어, 터미널에 `ifconfig -a` 명령어를 입력하고 RX 및 TX 패킷이 0이 아닌 인터페이스를 선택합니다.) 그리고 아래 텍스트의 `eno1`을 모두 `enp88s0` 또는 `enp89s0`으로 변경합니다.**
 
 아래의 내용을 추가합니다.(참고: 실습 환경에 따라 `address`, `netmask`, `gateway`, `dns-nameservers`의 값이 달라질 수 있습니다.)
+> `<your NIC name>`에 위에서 `ifconfig` 명령으로 확인한 네트워크에 연결된 인터페이스 이름(`eno1`, `enp88s0`, `enp89s0`...)을 입력합니다.
 
 ```text
 auto lo
@@ -304,8 +311,8 @@ iface br0 inet static
     gateway <gateway ip>
     dns-nameservers 203.237.32.100
 
-auto eno1
-iface eno1 inet manual
+auto <your NIC name>
+iface <your NIC name> inet manual
 
 auto vport_vFunction
 iface vport_vFunction inet manual
@@ -339,11 +346,11 @@ iface vport_vFunction inet manual
 >   ```
 >
 > - 물리적 인터페이스 설정
->   eno1(물리적 이더넷 인터페이스)을 부팅 시 자동으로 활성화합니다. eno1에게는 직접 IP 주소를 할당하지 않을 것이고, br0에 속하는 구성원으로 다룰 것입니다.
+>   `<your NIC name>`(`eno1`, `enp88s0`, `enp89s0`...; 물리적 이더넷 인터페이스)을 부팅 시 자동으로 활성화합니다. 인터넷과 직결된`<your NIC name>`에게는 직접 IP 주소를 할당하지 않을 것이고, br0에 속하는 구성원으로 다룰 것입니다.
 >
 >   ```text
->   auto eno1
->   iface eno1 inet manual
+>   auto <your NIC name>
+>   iface <your NIC name> inet manual
 >   ```
 >
 > - TAP 인터페이스 생성
@@ -365,7 +372,7 @@ iface vport_vFunction inet manual
 
 ```bash
 sudo systemctl restart systemd-resolved.service
-sudo ifup eno1  #change this if you are using two-port NUC
+sudo ifup <your NIC name>  #change this `<your NIC name>` what you are using.
 ```
 
 전체 interface를 다시 시작합니다.
@@ -385,7 +392,7 @@ vport_vFunction을 연결한 가상 머신(VM)을 만들겠습니다. 이 TAP(vp
 > **만약 NUC에 2개의 ethernet port가 있다면, `eno1` interface가 없습니다. 그러므로 하단의 block에서 `eno1`을 위에서 선택한 interface 중 하나로 변경해야합니다.(`enp88s0` 또는 `enp89s0` 중에서 현재 사용 중인 것을 선택합니다.)**
 
 ```bash
-sudo ovs-vsctl add-port br0 eno1   #change this if you are using two-port NUC
+sudo ovs-vsctl add-port br0 <your NIC name>  #change this `<your NIC name>` what you are using.
 sudo ovs-vsctl add-port br0 vport_vFunction
 sudo ovs-vsctl show
 ```
@@ -403,6 +410,10 @@ sudo systemctl unmask networking
 sudo systemctl enable networking
 sudo systemctl restart networking
 ```
+
+> [!NOTE]
+> **인터넷 연결 복구 지점**
+> 위 명령어까지 정상적으로 완료되면 인터넷 연결이 복구됩니다.
 
 ## 2-3. NUC: Making VM with KVM
 
