@@ -110,7 +110,7 @@ Reference: Download Site - <https://releases.ubuntu.com/24.04/>
    - Choose your language: English
    - Accessibility in Ubuntu: Don't configure (Next)
    - Select your keyboard layout: English (US)
-   - Connect to the internet: Use wired connection
+   - Connect to the internet: Do not connect to the internet
    - What do you want to do with Ubuntu?: Install Ubuntu
    - How would you like to install Ubuntu?: Interactive installation
    - What apps would you like to install to start with?: Default selection
@@ -122,7 +122,7 @@ Reference: Download Site - <https://releases.ubuntu.com/24.04/>
      -> If the IP address is XXX.XXX.XXX.109, then the hostname should be nuc109.
    - Your username: gist
    - For the password, follow the instructions provided by the TAs.
-4. On the Location settings screen, select "Seoul".
+4. On the Location settings screen, select "Seoul". (Click on Korea in the map)
 5. In "Review your choices" screen, you should see the following. Click the green "Install" button to proceed.
    - General
      - Disk setup: Erase disk and Install Ubuntu
@@ -189,6 +189,9 @@ If an issue related to booting occurs, follow these steps.
   - Address: The assigned IP address of the NUC. (Refer to the paper with the written IP addresses.)
   - Enter the Netmask, Gateway, and DNS information as well. (Configure it based on the TA’s instructions.)
     ![network setting 3](./img/network_setting3.png)
+
+- As shown, if Connected is displayed, the configuration is successful.
+  ![network setting 4](./img/network_setting4.png)
 
 ## 2-2. NUC: Network Configuration using Virtual Switch
 

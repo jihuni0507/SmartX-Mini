@@ -230,7 +230,7 @@ curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.s
 sudo apt install -y git-lfs
 git lfs install
 git clone --depth=1 https://github.com/SmartX-Labs/SmartX-Mini.git
-cd ~/SmartX-Mini/SmartX-Mini-2026/Experiment/Lab-2.\ InterConnect/deploy/hypirotos
+cd ~/SmartX-Mini/SmartX-Mini-2026/Experiment/Lab-2.\ InterConnect/deploy/hypriotos
 ```
 
 <details>
@@ -260,9 +260,9 @@ ls -alh # Check all files
 >
 > `network-config` 파일의 이름을 <ins>**절대로**</ins> 변경하시면 안됩니다.
 >
-> `network-config`는 시스템이 부팅될 때 초기화를 담당하는 `cloud-init`에게 네트워크 설정을 전달하기 위해 사용되는 파일로, 파일 이름을 기준으로 해당 파일 탐색을 시도합니다.  
-> `flash`를 통해 HypriotOS를 설치할 경우 `cloud-init`에 의해 관리되도록 구성되며, 부팅 시 네트워크 설정 초기화를 위해 먼저 로컬 파일시스템(`/boot` 등)에 위치한 `network-config` 파일을 탐색하도록 설정되어있습니다.  
-> 만약 파일 이름을 변경하실 경우 `cloud-init`이 네트워크 설정을 찾지 못해 default setting이 반영됩니다.  
+> `network-config`는 시스템이 부팅될 때 초기화를 담당하는 `cloud-init`에게 네트워크 설정을 전달하기 위해 사용되는 파일로, 파일 이름을 기준으로 해당 파일 탐색을 시도합니다.
+> `flash`를 통해 HypriotOS를 설치할 경우 `cloud-init`에 의해 관리되도록 구성되며, 부팅 시 네트워크 설정 초기화를 위해 먼저 로컬 파일시스템(`/boot` 등)에 위치한 `network-config` 파일을 탐색하도록 설정되어있습니다.
+> 만약 파일 이름을 변경하실 경우 `cloud-init`이 네트워크 설정을 찾지 못해 default setting이 반영됩니다.
 > 즉, 후술할 네트워크 설정이 반영되지 않을 뿐더러, 재설정을 위해 OS를 재설치하거나 네트워크 설정 파일을 찾아 직접 네트워크 인터페이스 설정을 수정해야 하므로 <ins>**절대로 파일의 명칭을 변경하면 안됩니다.**</ins>
 >
 > 참조: <https://cloudinit.readthedocs.io/en/stable/reference/datasources/nocloud.html#source-files>
@@ -289,11 +289,11 @@ ls -alh # Check all files
 >
 > 이러한 동작이 모두 마무리되면, 사용자가 시스템에 접근하여 활용할 수 있는 여건이 마련됩니다.
 >
-> 참고1: <https://cloudinit.readthedocs.io/en/latest/explanation/introduction.html>  
+> 참고1: <https://cloudinit.readthedocs.io/en/latest/explanation/introduction.html>
 > 참고2: <https://cloudinit.readthedocs.io/en/stable/reference/datasources/nocloud.html>
 
 ```bash
-pwd # 현재 Directory가 "SmartX-Mini/SmartX-Mini-2026/Experiment/Lab-2. InterConnect/"인지 확인
+pwd # 현재 Directory가 "SmartX-Mini/SmartX-Mini-2026/Experiment/Lab-2. InterConnect/deploy/hypriotos"인지 확인
 vim network-config
 ```
 
@@ -383,8 +383,8 @@ flash -u hypriotos-init.yaml -F network-config -d <Your SD Card Directory> hypri
 >
 > `hypriotos-init.yaml` 파일에 관하여
 >
-> `hypriotos-init.yaml`은 HypriotOS의 `/boot/user-data` 파일로 사용됩니다.  
-> `/boot/user-data` 파일은 사용자 정의 설정을 인스턴스에게 제공할 때 사용되는 파일로, 사용자 생성, Hostname 설정, `/etc/hosts` 자동 초기화 여부 등을 결정합니다.  
+> `hypriotos-init.yaml`은 HypriotOS의 `/boot/user-data` 파일로 사용됩니다.
+> `/boot/user-data` 파일은 사용자 정의 설정을 인스턴스에게 제공할 때 사용되는 파일로, 사용자 생성, Hostname 설정, `/etc/hosts` 자동 초기화 여부 등을 결정합니다.
 > 초기 계정 정보 또한 이곳에서 정의되므로, 설치 전 초기 계정 정보를 변경하거나, ID/PW를 잊어버렸을 때 이를 참고합니다.
 >
 > 참고: <https://cloudinit.readthedocs.io/en/stable/explanation/format.html>
@@ -393,9 +393,13 @@ flash -u hypriotos-init.yaml -F network-config -d <Your SD Card Directory> hypri
 
 ### 2-2-1. (PI) 네트워크 설정 확인
 
-이제 SD 카드를 분리하여 다시 Pi에 삽입한 뒤, Pi의 전원을 켭니다. ID는 `pi`, Password는 `1234` 입니다.
+이제 SD 카드를 분리하여 다시 Pi에 삽입한 뒤, Pi의 전원을 켭니다. Pi가 부팅을 완료할 때까지 잠시 대기합니다.
 
-이제부터 키보드와 모니터를 Pi에 연결하여 작업합니다.
+HypriotOS는 기본적으로 SSH 서버가 활성화되어 있으므로, 이제부터 NUC의 터미널에서 SSH를 통해 Pi에 접속하여 작업합니다. NUC의 터미널에서 다음 명령어를 입력하여 Pi에 접속합니다. ID는 `pi`, Password는 `1234` 입니다.
+
+```bash
+ssh pi@<PI_IP>
+```
 
 먼저, 네트워크 인터페이스 설정이 올바르게 이루어졌는지 확인하기 위해 `ifconfig` 명령을 쉘에 입력합니다.
 
@@ -459,7 +463,7 @@ sudo apt install -y git vim rdate openssh-server
 
 ### 2-2-3. (PI) 시간 동기화를 위한 `crontab` 설정
 
-라즈베리 파이는 RTC가 없는 관계로, 전원 종료 후 약 17분 동안만 시스템 시간이 유지됩니다.  
+라즈베리 파이는 RTC가 없는 관계로, 전원 종료 후 약 17분 동안만 시스템 시간이 유지됩니다.
 부팅 후 시간을 동기화하기 위해 `crontab`을 이용하여 부팅 완료 후 1분 뒤 `rdate`를 실행하도록 설정하겠습니다.
 
 먼저, 다음의 명령어를 입력하여 `crontab` 설정을 수정하도록 하겠습니다.
@@ -468,7 +472,7 @@ sudo apt install -y git vim rdate openssh-server
 sudo crontab -e
 ```
 
-`crontab`을 처음 설정하는 경우, 화면에 어떤 편집기를 사용할 것인지 설정할 수 있습니다.  
+`crontab`을 처음 설정하는 경우, 화면에 어떤 편집기를 사용할 것인지 설정할 수 있습니다.
 해당 화면에서 원하는 편집기를 정한 뒤, 설정 파일의 맨 아래에 다음을 입력합니다. (주석은 제외합니다.)
 
 ![crontab editor](./img/crontab_editor_selection.png)
@@ -488,11 +492,7 @@ sudo reboot
 
 ### 2-2-4. (NUC) Pi 환경 확인
 
-이전 과정에서 Pi에 `openssh-server`를 설치하였기 때문에, 외부에서 SSH를 통해 Pi에 접근할 수 있습니다.  
-(즉, 이제부터 모니터, 키보드를 일일이 뽑고 꽂을 필요 없이, NUC에서 SSH로 Pi에 접근하면 됩니다.)
-
-이를 확인하기 위해, NUC의 터미널에서 SSH를 통해 Pi에 접근하겠습니다.  
-NUC으로 돌아와, 다음과 같이 입력해주십시오.
+Pi를 재부팅한 이후, NUC의 터미널에서 다시 SSH로 Pi에 접속합니다.
 
 ```bash
 ssh pi@<PI_IP>  # Simple Format: ssh <ID>@<Target IP or Hostname>
@@ -506,15 +506,15 @@ ssh pi@<PI_IP>  # Simple Format: ssh <ID>@<Target IP or Hostname>
 >
 > 해당 오류는 접근할 IP 주소와 이와 연결된 SSH Key의 정보가 접근하려는 SSH Server의 Key와 다른 경우에 발생합니다. (e.g. `openssh-server` 재설치 이후 접근 시도)
 >
-> 각 SSH Server는 고유의 SSH Key를 갖고 있습니다.  
-> 해당 Key는 SSH Client가 Server에 접근하였을 때 전달받으며, Client는 `~/.ssh/known_hosts`에 이를 IP와 함께 저장합니다.  
-> (하단의 이미지가 이 과정에 해당합니다.)  
+> 각 SSH Server는 고유의 SSH Key를 갖고 있습니다.
+> 해당 Key는 SSH Client가 Server에 접근하였을 때 전달받으며, Client는 `~/.ssh/known_hosts`에 이를 IP와 함께 저장합니다.
+> (하단의 이미지가 이 과정에 해당합니다.)
 > ![ssh initial access](./img/ssh_initial_access.png)
 >
-> Client는 해당 Server에 다시 접근할 때, `~/.ssh/known_hosts`에 저장된 데이터를 이용하여, 접근하려는 Server가 이전에 접근했던 Server와 동일한지 확인합니다. (이는 중간자 공격 보안 위협을 방지하기 위한 정책입니다.)  
+> Client는 해당 Server에 다시 접근할 때, `~/.ssh/known_hosts`에 저장된 데이터를 이용하여, 접근하려는 Server가 이전에 접근했던 Server와 동일한지 확인합니다. (이는 중간자 공격 보안 위협을 방지하기 위한 정책입니다.)
 > 하지만 접근하려는 Server가 이전에 접근했었던 Server와 다를 경우, `ssh`는 위와 같은 오류를 출력하며 접근을 강제로 끊습니다.
 >
-> 위의 오류를 해결하기 위해, 다음의 방법을 통해 이전의 Fingerprint를 삭제합니다.  
+> 위의 오류를 해결하기 위해, 다음의 방법을 통해 이전의 Fingerprint를 삭제합니다.
 > 이후 다시 SSH 연결을 시도합니다.
 >
 > ```bash
@@ -594,7 +594,7 @@ sudo vim /etc/hosts
 >
 > 수정 이후, `/etc/hosts`에 기록된 NUC의 Hostname도 새로운 Hostname으로 수정해야 합니다.
 >
-> Pi의 경우, `cloud-init`으로 인해 영구적 변경을 위해 추가적인 절차를 거쳐야합니다.  
+> Pi의 경우, `cloud-init`으로 인해 영구적 변경을 위해 추가적인 절차를 거쳐야합니다.
 > 방법은 별도로 설명하지 않으며, <https://repost.aws/ko/knowledge-center/linux-static-hostname-rhel7-centos7>을 참고해주십시오.
 
 ### 2-3-2. (PI) Hostname preparation for Kafka
@@ -616,7 +616,7 @@ sudo vim /etc/hosts
 
 > [!warning]
 >
-> Pi의 `/etc/hosts`는 `cloud-init`에 의해 부팅 과정에서 초기화됩니다.  
+> Pi의 `/etc/hosts`는 `cloud-init`에 의해 부팅 과정에서 초기화됩니다.
 > 만약 종료 이후에도 `/etc/hosts`를 유지하고 싶을 경우, 후술할 참고 영역을 따릅니다.
 
 <!-- -->
@@ -625,7 +625,7 @@ sudo vim /etc/hosts
 >
 > Pi의 `/etc/hosts` 영구 보존
 >
-> `cloud-init`은 부팅 과정에서 사전 정의된 hosts 템플릿 파일을 이용하여 `/etc/hosts`를 재생성합니다.  
+> `cloud-init`은 부팅 과정에서 사전 정의된 hosts 템플릿 파일을 이용하여 `/etc/hosts`를 재생성합니다.
 > 이 과정에서 이전에 기록되었던 기록은 삭제됩니다.
 >
 > 영구적으로 반영하기 위해, 다음의 3개 방법 중 하나를 사용할 수 있습니다.
@@ -994,5 +994,5 @@ sudo docker run -it --rm \
 위의 질문을 생각해보며, Physical Interconnect와 Data Interconnect에 대해 고민해볼 수 있는 시간을 가져보시기 바랍니다.
 
 > [!important]
-> 실습에 참여하시느라 고생 많으셨습니다.  
+> 실습에 참여하시느라 고생 많으셨습니다.
 > 참여해주셔서 감사합니다.

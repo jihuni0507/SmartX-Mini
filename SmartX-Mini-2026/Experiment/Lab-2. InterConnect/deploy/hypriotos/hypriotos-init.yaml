@@ -32,5 +32,9 @@ runcmd:
   # Debian Buster is EOL. Repoint apt sources to the legacy repository.
   - 'sed -i "s|raspbian.raspberrypi.org|legacy.raspbian.org|g" /etc/apt/sources.list'
 
+  # Force HDMI output even when no monitor is detected at boot
+  - 'grep -q "hdmi_force_hotplug" /boot/config.txt || echo "hdmi_force_hotplug=1" >> /boot/config.txt'
+  - 'grep -q "hdmi_safe" /boot/config.txt || echo "hdmi_safe=1" >> /boot/config.txt'
+
   # Activate WiFi interface
 #  - 'ifup wlan0'

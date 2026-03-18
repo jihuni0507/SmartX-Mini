@@ -1,10 +1,10 @@
-# QnA for Spring 2025
+# QnA for Spring 2026
 
 실습 진행 중 생긴 질문 사항이 있다면, <b>TA에게 직접 질문하거나 아래 QnA용 설문지를 제출해주세요!</b> 해당 질문 검토 후, 그 다음 주차에 별도로 설명 드릴 예정입니다.
 
 If you have any questions that come up during the lab, please <b>ask your TA directly or submit the questionnaire for Q&A below!</b> We will review those questions and address them individually in the following week.
 
-https://docs.google.com/forms/d/e/1FAIpQLSez2kduI-cLlIcsbiMTsw57UcerbOFUAoHvgRQqC8Fp9Jsejg/viewform?usp=dialog
+https://docs.google.com/forms/d/e/1FAIpQLSfKoSjcA7bDYFdRwA2197AayUlarCQ71Wy98kjiYuFjEBeuWA/viewform?usp=dialog
 
 ---
 
